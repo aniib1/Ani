@@ -1,6 +1,6 @@
-sudo nano index.html#!/bin/bash
+#!/bin/bash
 
-# Ensure the script is run as root
+# run script as root
 if [[ $EUID -ne 0 ]]; then
   echo "Please run the script as root."
   exit 1
@@ -9,13 +9,13 @@ fi
 # Source the helper functions from tools.sh
 source ./tools.sh
 
-# Function to install Nginx
+# Installing Nginx
 install_nginx() {
   apt update && apt install -y nginx
   if [[ $? -eq 0 ]]; then
-    echo "Nginx successfully installed."
+    echo "Nginx installed"
   else
-    echo "Error: Failed to install Nginx."
+    echo "Error - Failed to install Nginx."
     exit 1
   fi
 }
@@ -39,7 +39,7 @@ main() {
   local websites_root="/var/www/websites"
 
   if [[ -z "$website_count" || "$website_count" -le 0 ]]; then
-    echo "Error: Please specify a valid number of websites."
+    echo "Error - Please specify a valid number of websites."
     exit 1
   fi
 
@@ -53,13 +53,13 @@ main() {
 
     create_website "$content_file" "$site_dir"
     if [[ $? -ne 0 ]]; then
-      echo "Error creating website $i. Skipping..."
+      echo "Error - creating $i. skipping..."
       continue
     fi
 
     create_nginx_config "$port" "$site_dir"
     if [[ $? -ne 0 ]]; then
-      echo "Error configuring Nginx for website $i. Skipping..."
+      echo "Error - configuring Nginx for web $i. skipping..."
       continue
     fi
   done
@@ -68,7 +68,7 @@ main() {
   if [[ $? -eq 0 ]]; then
     echo "Nginx successfully restarted."
   else
-    echo "Error: Failed to restart Nginx."
+    echo "Error - Failed to restart Nginx."
     exit 1
   fi
 }

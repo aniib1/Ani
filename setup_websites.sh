@@ -4,7 +4,6 @@
 base_dir="/var/www"
 output_dir="$base_dir/sites"
 
-# Number of websites to generate (passed as an argument)
 count=$1
 
 # Ensure base directory exists
@@ -13,7 +12,7 @@ sudo mkdir -p "$output_dir"
 # Loop to generate websites and configure Nginx
 for i in $(seq 1 "$count"); do
     # Define port and directories
-    port=$((8000 + i)) # Port starts from 8001
+    port=$((8000 + i))
     site_dir="$output_dir/site_$i"
     conf_file="/etc/nginx/sites-available/site_$i"
 
@@ -21,7 +20,7 @@ for i in $(seq 1 "$count"); do
     sudo mkdir -p "$site_dir"
     echo "<h1>Welcome to Website $i on Port $port</h1>" | sudo tee "$site_dir/index.html"
 
-    # Generate Nginx configuration for the site
+    # Generate Nginx config... for the site
     sudo bash -c "cat > $conf_file" <<EOL
 server {
     listen $port;
@@ -42,7 +41,7 @@ EOL
     echo "Configured site $i on port $port with root $site_dir"
 done
 
-# Test Nginx configuration and reload
+# Test for nginx
 sudo nginx -t && sudo systemctl reload nginx
 
 echo "All $count websites have been configured and started."
