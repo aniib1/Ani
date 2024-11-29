@@ -1,68 +1,48 @@
 #!/bin/bash
 
-# Creating a simple website
-create_website() {
-  local content_file="$1"
-  local output_dir="$2"
-
-  if [[ ! -f "$content_file" ]]; then
-    echo "Error- Content file '$content_file' not found."
-    return 1
-  fi
-
-  mkdir -p "$output_dir"
-  if [[ $? -ne 0 ]]; then
-    echo "Error - Failed to create directory '$output_dir'."
-    return 1
-  fi
-
-  echo "<!DOCTYPE html>
-<html>
-<head>
-    <title>Simple Website</title>
-</head>
-<body>
-    $(cat "$content_file")
-</body>
-</html>" > "$output_dir/index.html"
-
-  if [[ $? -eq 0 ]]; then
-    echo "Website created in '$output_dir'."
-  else
-    echo "Error - Failed to create website."
-    return 1
-  fi
+# Check and install Nginx if not installed
+install_nginx() {
+    if ! command -v nginx &> /dev/null; then
+        echo "Nginx is not installed. Installing..."
+        sudo apt update && sudo apt install nginx -y
+    else
+        echo "Nginx is already installed."
+    fi
 }
 
-# Creating Nginx configuration
-create_nginx_config() {
-  local port="$1"
-  local root_dir="$2"
-  local config_file="/etc/nginx/sites-available/website_$port"
+# Function to generate random content
+generate_random_content() {
+    local file_path="$1"
+    echo "Generating random content in $file_path..."
+    echo "Random content $RANDOM" > "$file_path"
+}
 
-  if [[ -z "$port" || -z "$root_dir" ]]; then
-    echo "Error - Port or root directory not provided."
-    return 1
-  fi
+# Function to generate files
+generate_files() {
+    local base_dir="${1:-/var/www}"
+    local num_files="${2:-5}"
+    mkdir -p "$base_dir"
+    
+    echo "Generating $num_files files in $base_dir..."
+    for ((i=1; i<=num_files; i++)); do
+        local file_path="$base_dir/file_$i.txt"
+        generate_random_content "$file_path"
+    done
+    echo "Files successfully created."
+}
 
-  echo "server {
-    listen $port;
-    server_name localhost;
-
-    root $root_dir;
-    index index.html;
-
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-}" > "$config_file"
-
-  if [[ $? -eq 0 ]]; then
-    ln -sf "$config_file" "/etc/nginx/sites-enabled/"
-    echo "Nginx configuration created for port $port."
-  else
-    echo "Error - Failed to create Nginx configuration."
-    return 1
-  fi
+# Function to setup websites
+setup_websites() {
+    local base_dir="${1:-/var/www}"
+    local num_sites="${2:-3}"
+    install_nginx
+    
+    echo "Setting up $num_sites websites in $base_dir..."
+    for ((i=1; i<=num_sites; i++)); do
+        local site_dir="$base_dir/site_$i"
+        mkdir -p "$site_dir"
+        echo "<html><body><h1>Site $i</h1></body></html>" > "$site_dir/index.html"
+    done
+    echo "Websites successfully set up."
 }
   
