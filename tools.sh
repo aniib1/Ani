@@ -35,7 +35,6 @@ install_nginx() {
 generate_website_files() {
     local num_sites="${1:-3}"
     local base_dir="${2:-/var/www}"
-    install_nginx
     
     echo "Setting up $num_sites websites in $base_dir..."
     for ((i=1; i<=num_sites; i++)); do
