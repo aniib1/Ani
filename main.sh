@@ -17,5 +17,5 @@ generate_website_files $website_count $base_dir
 generate_nginx_config_files $website_count $base_dir
 
 #Retsarting nginx to load new configs
-systemctl nginx restart
+systemctl  restart nginx
 

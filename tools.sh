@@ -64,3 +64,4 @@ generate_nginx_config_files() {
     }
 }" > /etc/nginx/sites-enabled/site_config_${port}
     done
+}
