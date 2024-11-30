@@ -4,11 +4,18 @@
 source ./tools.sh
 
 # Global variable
-main="${1:-/var/www}"
+website_count="${1:-1}"
+base_dir="${2:-/var/www}"
 
-# Setup websites
-setup_websites "$main" 3
+#Check and install nginx if not present
+install_nginx
 
-# Generate files
-generate_files "$main" 10
+# generate websire directories and files
+generate_website_files $website_count $base_dir
+
+# Generate nginx config files
+generate_nginx_config_files $website_count $base_dir
+
+#Retsarting nginx to load new configs
+systemctl nginx restart
 
